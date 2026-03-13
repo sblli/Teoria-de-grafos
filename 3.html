@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Juego euleriano</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/game.css">
+</head>
+<body>
+<header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="index.html" class="active">Inicio</a></li>
+          <li><a href="explica.html">Explicación</a></li>
+          <li class="dropdown"><a href="eleccionjuego.html"><span>Juegos</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="1.html">Casa</a></li>
+              <li><a href="2.html">Pentágono</a></li>
+              <li><a href="3.html">Triángulos</a></li>
+              <li><a href="4.html">Arco </a></li>
+            </ul>
+          </li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+    </div>
+</header>
+    <main>
+<div class="container">
+    <!-- Section Title -->
+    <br><div class="container section-title pt-3"><br><br><br>
+    <h2>¡Completa la figura!</h2>
+    <p style="font-size: 18px;"><b>Recuerda que:</b> Tendrá solución si todos sus vertices son pares o si tiene dos vertices impares. Y, si el recorrido empieza y termina en el mismo vértice, pasando una sola vez por cada arista, es un <b>ciclo</b>. Pero si empieza y termina en distintos vértices, es <b>un camino euleriano</b></p>
+    </div><!-- End Section Title -->
+<div id="main-container">
+  <div id="game-area">
+    <!-- Imagen guía -->
+    <img src="assets/img/trianguloimg.png" alt="Guía del juego" style="width: 120px; height: auto; border-radius: 8px;">
+    <!-- Cuadro del juego -->
+    <div id="game">
+      <svg id="lines" width="400" height="400" style="position:absolute; top:0; left:0; z-index:0;"></svg>
+
+      <!-- Nodos -->
+    <div class="node" id="A" style="top: 110px; left: 120px;"></div>   <!-- Nodo superior izquierdo -->
+    <div class="node" id="B" style="top: 110px; left: 260px;"></div>   <!-- Nodo superior derecho -->
+    <div class="node" id="C" style="top: 240px; left: 80px;"></div>   <!-- Nodo inferior izquierdo -->
+    <div class="node" id="D" style="top: 240px; left: 180px;"></div>  <!-- Nodo inferior medio -->
+    <div class="node" id="E" style="top: 240px; left: 280px;"></div>  <!-- Nodo inferior derecho -->
+    <!-- Jugador -->
+    <img id="player" class="player" src="assets/img/cat.png" width="60" height="60">
+    </div> 
+    <!-- Botones -->
+    <div id="controls">
+        <button type="button" class="btn btn-dark" onclick="move('up')">↑</button>
+        <button type="button" class="btn btn-dark" onclick="move('down')">↓</button> <br>
+        <button type="button" class="btn btn-dark" onclick="move('left')">←</button>
+        <button type="button" class="btn btn-dark" onclick="move('right')">→</button><br>
+        <button type="button" class="btn btn-info" onclick="resetGame()">🔄 Reiniciar</button>
+    </div>
+  </div>
+    
+    </div>
+</div>
+<p id="status"></p>
+<footer id="footer" class="footer">
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">iLanding</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> Distributed By <a href="https://themewagon.com">ThemeWagon</a>
+      </div>
+    </div>
+
+  </footer>
+</main>
+
+<script>
+  const player = document.getElementById('player');
+  const statusText = document.getElementById('status');
+  const svg = document.getElementById('lines');
+
+  const nodes = {
+  A: { top: 110, left: 120 },
+  B: { top: 110, left: 260 },
+  C: { top: 240, left: 80 },
+  D: { top: 240, left: 180 },
+  E: { top: 240, left: 280 }
+};
+
+const paths = [
+  ['A', 'C'],
+  ['C', 'D'],
+  ['D', 'A'],
+  ['A', 'B'],
+  ['B', 'D'],
+  ['D', 'E'],
+  ['E', 'B']
+];
+
+
+let currentNode = 'A'; // Nodo inicial
+
+  const visitedPaths = [];
+
+  function isValidMove(from, to) {
+    const exists = paths.some(p => (p[0] === from && p[1] === to) || (p[0] === to && p[1] === from));
+    if (!exists) return false;
+
+    const alreadyVisited = visitedPaths.some(p =>
+      (p[0] === from && p[1] === to) || (p[0] === to && p[1] === from)
+    );
+
+    return !alreadyVisited;
+  }
+
+  function getNextNode(direction) {
+  const transitions = {
+    A: { left: 'C', down: 'D', right: 'B' },
+    C: { right: 'D', up: 'A' },
+    D: { up: 'A', left: 'C', right: 'E', down: 'B' },
+    B: { left: 'A', down: 'D', up: 'E' },
+    E: { left: 'D', up: 'B' }
+  };
+  return transitions[currentNode]?.[direction] || null;
+    }
+
+
+  function move(direction) {
+    const nextNode = getNextNode(direction);
+    if (!nextNode) return;
+
+    if (isValidMove(currentNode, nextNode)) {
+      drawLine(currentNode, nextNode);
+      visitedPaths.push([currentNode, nextNode]);
+      currentNode = nextNode;
+      player.style.top = nodes[currentNode].top + 'px';
+      player.style.left = nodes[currentNode].left + 'px';
+      statusText.textContent = '';
+      checkCompletion();
+    } else {
+      statusText.textContent = '❌ Ya has recorrido ese camino.';
+    }
+  }
+
+  function drawLine(from, to) {
+    const x1 = nodes[from].left + 20; // Centrar nodo (40px/2)
+    const y1 = nodes[from].top + 20;
+    const x2 = nodes[to].left + 20;
+    const y2 = nodes[to].top + 20;
+
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", x1);
+    line.setAttribute("y1", y1);
+    line.setAttribute("x2", x2);
+    line.setAttribute("y2", y2);
+    line.setAttribute("stroke", "#414245");
+    line.setAttribute("stroke-width", "4");
+
+    svg.appendChild(line);
+  }
+
+  function checkCompletion() {
+    if (visitedPaths.length === paths.length) {
+      statusText.textContent = alert('✅ ¡Has completado el camino correctamente!');
+    }
+  }
+
+  function resetGame() {
+    currentNode = 'A';
+    visitedPaths.length = 0;
+    player.style.top = nodes[currentNode].top + 'px';
+    player.style.left = nodes[currentNode].left + 'px';
+    statusText.textContent = '';
+    while (svg.firstChild) {
+      svg.removeChild(svg.firstChild);
+    }
+  }
+
+  document.addEventListener('keydown', function(e) {
+    const keyMap = {
+      ArrowUp: 'up',
+      ArrowDown: 'down',
+      ArrowLeft: 'left',
+      ArrowRight: 'right'
+    };
+    if (keyMap[e.key]) move(keyMap[e.key]);
+  });
+
+  function initGame() {
+  currentNode = 'A'; // nodo inicial
+  player.style.top = nodes[currentNode].top + 'px';
+  player.style.left = nodes[currentNode].left + 'px';
+}
+initGame();
+
+</script>
+
+
+</body>
+</html>
